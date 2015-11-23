@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="order_line" position="before">
+		    <button name="%(action_sale_add_product)d" class="oe_edit_only" type="action" string="Agregar producto" attrs="{'invisible':[('state','not in',['draft','sent'])]}" groups="base.group_user"/>
+		</field>
+            </field>
+        </record>
+	
+	
+	<record id="sale_order_line_partner" model="ir.ui.view">
+	    <field name="name">sale.order.partner</field>
+	    <field name="model">sale.order</field>
+	    <field name="inherit_id" ref="sale.view_order_form"/>
+	    <field name="arch" type="xml">
+		
+		<xpath expr="//form/sheet/notebook/page[@string='Order Lines']/field[@name='order_line']/tree[@string='Sales Order Lines']" 
+			position="attributes">
+		    
+		    <attribute name="create">0</attribute>
+		    <attribute name="delete">1</attribute>
+		    
+		</xpath>
+			
+		<xpath expr="//form/sheet/notebook/page[@string='Order Lines']/field[@name='order_line']/tree/field[@name='product_id']" 
+			position="replace">
+		 
+		    <field name="product_id"
+		    invisible="1"
+		    context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom}"
+		    groups="base.group_user"
+		    on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, False, product_uos_qty, False, name, parent.partner_id, False, True, parent.date_order, False, parent.fiscal_position, False, context)"/>
+
+		    <field name="supplier_id" string="Proveedor"
+		    invisible="1"
+		    attrs="{'readonly':[('product_id', '=', False)]}"/>
+    
+		</xpath>
+		
+		<xpath expr="//form/sheet/notebook/page[@string='Order Lines']/field[@name='order_line']/tree/field[@name='tax_id']" 
+			position="replace">
+		    
+		    <field name="tax_id" readonly="1" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','&lt;&gt;','purchase')]"/>
+		    
+		</xpath>
+
+		<xpath expr="//form/sheet/notebook/page[@string='Order Lines']/field[@name='order_line']/tree/field[@name='price_unit']" 
+			position="replace">
+		    
+		    <field name="price_unit"/>
+		    
+		</xpath>
+		
+		<xpath expr="//form/sheet/notebook/page[@string='Order Lines']" 
+			position="after">
+		    
+		    <page string="Márgenes de venta">
+			<field name="sale_order_line_margin" widget="one2many_list" create="0" delete="1">
+			    <tree string="Márgenes de venta"  version="7.0" class="width_css width_css2 width_css3 width_css4 width_css5">
+				<field name="product_desc" class="width_css"/>
+				<field name="supplier_id" class="width_css2"/>
+				<field name="supplier_price" class="width_css3"/>
+				<field name="porcentaje" class="width_css4"/>
+				<field name="margen" class="width_css5"/>
+			    </tree>
+			</field>
+			<group class="oe_subtotal_footer oe_right" colspan="2">
+                            <div class="oe_inline">
+                                <label for="margen_bruto" />
+                            </div>
+			    <field name="margen_bruto" nolabel="1" readonly="1"/>
+			</group>
+			<div class="oe_clear"/>
+		    </page>
+		    
+		</xpath>
+
+		<xpath expr="//form/sheet/notebook/page[@string='Márgenes de venta']/field[@name='sale_order_line_margin']/tree[@string='Márgenes de venta']" 
+			position="attributes">
+		    
+		    <attribute name="create">0</attribute>
+		    <attribute name="delete">1</attribute>
+		    
+		</xpath>
+			
+	    </field>
+	</record>	
+
+        <record id="view_sale_margin_tree" model="ir.ui.view">
+            <field name="name">sale.order.line.margin</field>
+            <field name="model">sale.order.line.margin</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree string="Márgenes de venta">
+		    <field name="product_desc"/>
+		    <field name="supplier_id"/>
+		    <field name="supplier_price"/>
+		    <field name="porcentaje"/>
+		    <field name="margen"/>
+                </tree>
+            </field>
+        </record>
+	
+
+        <record id="action_sale_margin" model="ir.actions.act_window">
+            <field name="name">Margenes de venta</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.line.margin</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_sale_margin_tree"/>
+            <field name="view_mode">tree</field>
+        </record>
+
+	
+    </data>
+</openerp>

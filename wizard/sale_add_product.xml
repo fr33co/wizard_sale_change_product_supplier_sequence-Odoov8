@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="sale_order_add_product_view">
+            <field name="name">sale.order.add.product.form</field>
+            <field name="model">sale.order.add.product</field>
+            <field name="arch" type="xml">
+                <form string="Agregar producto">
+		    <separator string="Selección del producto:"/>
+		    <group>
+			<group>
+			    <field name="product_category_id"/>
+			    <field name="supplier_id" on_change="onchange_get_cost(product_id, supplier_id)"/>
+			</group>
+			<group>
+			    <field name="product_id" domain="[('categ_id','in',[product_category_id])]"
+			    on_change="onchange_get_supplier(product_id)"/>
+			    <field name="quantity"/>
+			</group>
+		    </group>
+		    <separator string="Análisis de precios:"/>
+		    <group>
+			<group>
+			    <field name="supplier_price" readonly="1"/>
+			    <field name="supplier_price2" invisible="1"/>
+			</group>
+			<group>
+			    <field name="public_price" readonly="1"/>
+			</group>
+		    </group>
+		    <separator string="Información extra:"/>
+		    <h3>
+			Los precios mostrados en este asistente no asigna aún las tarifas.
+			Las tarifas se aplicarán al agregar el producto al presupuesto.
+		    </h3>
+                <footer>
+                    <button name="add_product" type="object" class="oe_highlight" string="Agregar"/>
+                    or 
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+                </form>
+            </field>
+        </record>
+
+	<act_window id="action_sale_add_product"
+                    name="Agregar producto"
+                    src_model="sale.order"
+                    res_model="sale.order.add.product"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+	
+    </data>
+</openerp>

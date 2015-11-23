@@ -1,0 +1,19 @@
+.width_css [data-field="product_desc"] {
+    width: 250px;
+    }
+    
+.width_css2 [data-field="supplier_id"] {
+    width: 150px;
+    }
+    
+.width_css3 [data-field="supplier_price"] {
+    width: 45px;
+    }
+
+.width_css4 [data-field="porcentaje"] {
+    width: 45px;
+    }
+    
+.width_css5 [data-field="margen"] {
+    width: 45px;
+    }
